@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LrcView">
+        <attr name="LTColor" format="color|reference" />
+        <attr name="DKColor" format="color|reference" />
+
+        <attr name="LTTextSize" format="dimension" />
+        <attr name="DKTextSize" format="dimension" />
+    </declare-styleable>
+</resources>

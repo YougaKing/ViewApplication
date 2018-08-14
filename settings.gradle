@@ -1,1 +1,1 @@
-include ':app', ':leafloading', ':imagemarge'
+include ':app', ':leafloading', ':imagemarge', ':lrcview'

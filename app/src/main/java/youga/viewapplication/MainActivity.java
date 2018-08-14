@@ -2,8 +2,8 @@ package youga.viewapplication;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         String[] arrays = new String[]{
                 "Canvas",
+                "ThumbView",
         };
 
         listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrays));
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         intent = new Intent(MainActivity.this, CanvasActivity.class);
+                        break;
+                    case 1:
+                        intent = new Intent(MainActivity.this, ThumbActivity.class);
                         break;
                 }
                 if (intent != null) startActivity(intent);

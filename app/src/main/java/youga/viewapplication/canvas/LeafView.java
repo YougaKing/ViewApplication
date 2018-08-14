@@ -101,10 +101,10 @@ public class LeafView extends View {
         } else if (intervalTime > mLeafFloatTime) {
             leaf.startTime = System.currentTimeMillis() + mRandom.nextInt((int) mLeafFloatTime);
         }
-
-        float fraction = (float) intervalTime / mLeafFloatTime;
-        leaf.x = (int) (mProgressWidth - mProgressWidth * fraction);
-        leaf.y = getLocationY(leaf);
+//
+//        float fraction = (float) intervalTime / mLeafFloatTime;
+//        leaf.x = (int) (mProgressWidth - mProgressWidth * fraction);
+//        leaf.y = getLocationY(leaf);
     }
 
     private void canvasProgress(Canvas canvas) {
