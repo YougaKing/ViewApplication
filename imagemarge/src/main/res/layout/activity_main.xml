@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="youga.imagemarge.MainActivity">
 
     <FrameLayout
+        android:id="@+id/fl_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="200dp">
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/log" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@null" />
 
-        <youga.imagemarge.SpaceView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <youga.imagemarge.TextSticker
+        <youga.imagemarge.TextStickerView
             android:id="@+id/textSticker"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
 
     </FrameLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/colorAccent" />
 
     <EditText
         android:id="@+id/editText"
@@ -39,4 +41,4 @@
         android:inputType="text"
         android:visibility="gone"
         tools:visibility="visible" />
-</FrameLayout>
+</LinearLayout>

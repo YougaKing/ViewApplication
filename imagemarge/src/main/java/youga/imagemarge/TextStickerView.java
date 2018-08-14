@@ -8,11 +8,8 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.text.Layout;
@@ -25,8 +22,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
-
+import android.view.ViewGroup;
 
 import youga.imagemarge.util.TextMeasure;
 
@@ -35,12 +31,11 @@ import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
 
 /**
- * @author YougaKingWu
- * @descibe ...
- * @date 2017/11/16 0016-14:16
+ * author: YougaKingWu@gmail.com
+ * created on: 2018/08/14 10:49
+ * description: 文字贴纸
  */
-
-public class TextSticker extends View {
+public class TextStickerView extends View {
 
     private static final String TAG = "TextSticker";
 
@@ -51,7 +46,7 @@ public class TextSticker extends View {
     private TextPaint mTextPaint = new TextPaint(ANTI_ALIAS_FLAG);
     private Paint mBorderPaint = new Paint(ANTI_ALIAS_FLAG);
     private StaticLayout mTextLayout;
-    private int mWidth, mHeight, mTextMaxWidth;
+    private int mTextMaxWidth;
     private Bitmap mDeleteBitmap, mQuotesBitmap, mColorBitmap, mControlBitmap, mEditBitmap;
     private Matrix mMatrix = new Matrix(), mDeleteMatrix = new Matrix(), mQuotesMatrix = new Matrix(), mColorMatrix = new Matrix(), mControlMatrix = new Matrix(), mEditMatrix = new Matrix();
     private RectF mDeleteRectF = new RectF(), mColorRectF = new RectF(), mControlRectF = new RectF(), mEditRectF = new RectF();
@@ -64,29 +59,29 @@ public class TextSticker extends View {
     private float mDegrees;
     private PointF mCenterPoint = new PointF();
 
-    public TextSticker(Context context) {
+    public TextStickerView(Context context) {
         this(context, null);
     }
 
-    public TextSticker(Context context, @Nullable AttributeSet attrs) {
+    public TextStickerView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public TextSticker(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public TextStickerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
-    }
 
-    private void init() {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         mMarginTop = (int) TypedValue.applyDimension(COMPLEX_UNIT_DIP, mMarginTop, metrics);
         mMarginLeft = (int) TypedValue.applyDimension(COMPLEX_UNIT_DIP, mMarginLeft, metrics);
+
         mTextSize = (int) TypedValue.applyDimension(COMPLEX_UNIT_SP, mTextSize, metrics);
         mTextPaint.setColor(mTextColor);
         mTextPaint.setTextSize(mTextSize);
+
         mBorderPaint.setColor(Color.WHITE);
         mBorderPaint.setStyle(Paint.Style.STROKE);
         mBorderPaint.setStrokeWidth(TypedValue.applyDimension(COMPLEX_UNIT_DIP, 1, metrics));
+
         float[] dottedLine = new float[]{16, 8, 16, 8};
         DashPathEffect pathEffect = new DashPathEffect(dottedLine, 0);
         mBorderPaint.setPathEffect(pathEffect);
@@ -99,41 +94,48 @@ public class TextSticker extends View {
         setFocusable(false);
     }
 
+
+    /**
+     * @param width  图片的宽度
+     * @param height 图片的高度
+     */
+    public void setDrawRange(int width, int height) {
+        mMoveRectF.set(0, 0, width, height);
+        mTextMaxWidth = (int) (width * 3F / 5F);
+        ViewGroup.LayoutParams params = getLayoutParams();
+        params.width = width;
+        params.height = height;
+        requestLayout();
+    }
+
+
     public void setText(final String text) {
-        if (TextUtils.isEmpty(text)) return;
-        if (mWidth == 0) {
-            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    setText(text);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                }
-            });
+        mMatrix.reset();
+        mDeleteMatrix.reset();
+        mQuotesMatrix.reset();
+        mColorMatrix.reset();
+        mControlMatrix.reset();
+        mEditMatrix.reset();
+        if (TextUtils.isEmpty(text)) {
+            mTextLayout = null;
+            invalidate();
             return;
         }
-
         RectF textRect = TextMeasure.measureText(mTextPaint, text, mTextMaxWidth);
         mTextLayout = new StaticLayout(text, mTextPaint, (int) textRect.right, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0f, true);
 
-        mEffectOriginRectF.set(
-                mMarginLeft + mDeleteBitmap.getWidth() * 0.5f,
-                mMarginTop + mDeleteBitmap.getHeight() * 0.5f,
-                mMarginLeft + mDeleteBitmap.getWidth() * 0.5f + mQuotesBitmap.getWidth() + textRect.right,
-                mMarginTop + mDeleteBitmap.getHeight() * 0.5f + mQuotesBitmap.getHeight() * 0.25f + textRect.bottom
+
+        float left = mMarginLeft + mDeleteBitmap.getWidth() * 0.5f;
+        float top = mMarginTop + mDeleteBitmap.getHeight() * 0.5f;
+        mEffectOriginRectF.set(left, top,
+                left + mQuotesBitmap.getWidth() + textRect.right,
+                top + mQuotesBitmap.getHeight() * 0.25f + textRect.bottom
         );
 
-        mMatrix.reset();
-        mDeleteMatrix.reset();
         mDeleteMatrix.postTranslate(mMarginLeft, mMarginTop);
-        mQuotesMatrix.reset();
         mQuotesMatrix.postTranslate(mEffectOriginRectF.left, mEffectOriginRectF.top);
-        mColorMatrix.reset();
         mColorMatrix.postTranslate(mEffectOriginRectF.right - mColorBitmap.getWidth() * 0.5f, mEffectOriginRectF.top - mColorBitmap.getHeight() * 0.5f);
-        mControlMatrix.reset();
         mControlMatrix.postTranslate(mEffectOriginRectF.right - mControlBitmap.getWidth() * 0.5f, mEffectOriginRectF.bottom - mControlBitmap.getHeight() * 0.5f);
-        mEditMatrix.reset();
         mEditMatrix.postTranslate(mEffectOriginRectF.left - mEditBitmap.getWidth() * 0.5f, mEffectOriginRectF.bottom - mEditBitmap.getHeight() * 0.5f);
 
         invalidate();
@@ -144,7 +146,7 @@ public class TextSticker extends View {
         super.onDraw(canvas);
 
         if (mTextLayout == null) return;
-        mTextPaint.setColor(mTextColor);
+
         mMatrix.mapRect(mEffectRectF, mEffectOriginRectF);
 
         if (isFocusable()) {
@@ -165,17 +167,6 @@ public class TextSticker extends View {
         canvas.save();
         canvas.drawBitmap(mQuotesBitmap, mQuotesMatrix, null);
         canvas.restore();
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        mWidth = MeasureSpec.getSize(widthMeasureSpec);
-        mHeight = MeasureSpec.getSize(heightMeasureSpec);
-        mMoveRectF.set(0, 0, mWidth, mHeight);
-        mTextMaxWidth = (int) (mMoveRectF.right / 5f * 3f);
-        Log.w(TAG, "onMeasure()-->" + mMoveRectF.toString());
     }
 
 
@@ -246,7 +237,7 @@ public class TextSticker extends View {
                     float centerX = pointF.x;
                     float centerY = pointF.y;
                     float degrees = rotation(event);
-                    mMatrix.postRotate(degrees, centerX, centerY);
+                    mMatrix.postRotate(degrees, getMeasuredWidth() / 2, getMeasuredHeight() / 2);
                     mQuotesMatrix.postRotate(degrees, centerX, centerY);
                     mDeleteMatrix.postRotate(degrees, centerX, centerY);
                     mColorMatrix.postRotate(degrees, centerX, centerY);
@@ -269,8 +260,7 @@ public class TextSticker extends View {
     }
 
     private void onDeleteClick() {
-        if (mListener != null) mListener.onDeleteClick();
-
+        setText(null);
     }
 
     private void onEditClick() {
@@ -286,6 +276,7 @@ public class TextSticker extends View {
             mQuotesBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_quotes_white);
             mTextColor = Color.WHITE;
         }
+        mTextPaint.setColor(mTextColor);
         invalidate();
     }
 
@@ -342,7 +333,6 @@ public class TextSticker extends View {
         return nowDegree - originDegree;
     }
 
-
     private float calculateDegree(float x, float y) {
         PointF pointF = calculateCenter();
         double diffX = x - pointF.x;
@@ -365,8 +355,6 @@ public class TextSticker extends View {
     }
 
     public interface OnOptionClickListener {
-        void onDeleteClick();
-
         void onColorClick();
 
         void onEditClick();
