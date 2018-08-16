@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     @BindView(R.id.textSticker)
-    TextStickerView mTextSticker;
+    TextSticker mTextSticker;
     @BindView(R.id.imageView)
     ImageView mImageView;
     @BindView(R.id.editText)
@@ -76,25 +76,25 @@ public class MainActivity extends AppCompatActivity {
                 mImageView.requestLayout();
 
                 mImageView.setImageResource(R.drawable.log);
-                mTextSticker.setDrawRange(width, height);
+//                mTextSticker.setDrawRange(width, height);
                 mTextSticker.setText(text);
             }
         });
 
-        mTextSticker.setOnOptionClickListener(new TextStickerView.OnOptionClickListener() {
-            @Override
-            public void onColorClick() {
-
-            }
-
-            @Override
-            public void onEditClick() {
-                showSoftInput(mTextSticker);
-                mEditText.setVisibility(View.VISIBLE);
-                mEditText.setFocusable(true);
-                mEditText.requestFocus();
-            }
-        });
+//        mTextSticker.setOnOptionClickListener(new TextStickerView.OnOptionClickListener() {
+//            @Override
+//            public void onColorClick() {
+//
+//            }
+//
+//            @Override
+//            public void onEditClick() {
+//                showSoftInput(mTextSticker);
+//                mEditText.setVisibility(View.VISIBLE);
+//                mEditText.setFocusable(true);
+//                mEditText.requestFocus();
+//            }
+//        });
 
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

@@ -88,7 +88,7 @@ public class TextStickerView extends View {
 
         mDeleteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_delete);
         mQuotesBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_quotes_white);
-        mColorBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_color);
+        mColorBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_color_white);
         mControlBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_control);
         mEditBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_edit);
         setFocusable(false);
@@ -272,8 +272,10 @@ public class TextStickerView extends View {
         if (mTextColor == Color.WHITE) {
             mTextColor = Color.BLACK;
             mQuotesBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_quotes_black);
+            mColorBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_color_black);
         } else {
             mQuotesBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_quotes_white);
+            mColorBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sticker_color_white);
             mTextColor = Color.WHITE;
         }
         mTextPaint.setColor(mTextColor);
